@@ -3,6 +3,7 @@ package tests;
 import com.microsoft.playwright.*;
 import helpers.TestDataCsvUtil;
 import org.junit.jupiter.api.*;
+import pages.HolidayAutosCarBookingPage;
 import pages.HolidayAutosHomePage;
 import pages.HolidayAutosCarsPage;
 import utils.PlaywrightFactory;
@@ -48,7 +49,7 @@ public class HolidayAutosSearchTest {
 
     @Test
     @DisplayName("Test 2: Verify first car is the cheapest after sorting by price")
-    void testFirstCarIsCheapest() {
+    void shouldOrderCarsByPriceAndFirstCarIsCheapest() {
         // Arrange & Act
         HolidayAutosCarsPage holidayAutosCarsPage = searchCars("Barcelona", LocalDate.now().plusDays(1), LocalDate.now().plusDays(7));
         holidayAutosCarsPage.waitUntilCarsAreLoaded();
@@ -65,18 +66,50 @@ public class HolidayAutosSearchTest {
                     String.format("First price €%.2f (the cheapest) is higher than another €%.2f at index %d", firstPrice, other, i)
             );
         }
-        // Read existing data written in Test 1
+        // Read existing latest test data written in Test 1
         Map<String, String> data = TestDataCsvUtil.readTestData();
         String pickupDateStr = data.get("pickupDate");
         String returnDateStr = data.get("returnDate");
 
-        // Store test data: Write all latest Test 1 execution data dates + updated the cheapest price from Test 2 to CSV
+        // Store test data: Write all latest Test 1 execution data dates + updated the cheapest price from Test 2
         TestDataCsvUtil.writeTestData(pickupDateStr, returnDateStr, firstPrice);
     }
 
-    private HolidayAutosCarsPage searchCars(String pickUpLocation, LocalDate pickUpDate, LocalDate returnDate) {
+    @Test
+    @DisplayName("Test 3 - Select the cheapest car and validate details")
+    void testSelectCheapestCarAndVerifyDetails() {
+        // load test data from CSV & Arrange
+        Map<String, String> testData = TestDataCsvUtil.readTestData();
 
-        // Perform actions: fill search and submit
+        String pickupDateFromTest1 = testData.get("pickupDate");
+        String returnDateFromTest1 = testData.get("returnDate");
+        String priceFromTest2 = testData.get("cheapestPrice");
+
+        assertAll(
+                () -> assertNotNull(pickupDateFromTest1, "Pickup date is missing in test data"),
+                () -> assertNotNull(returnDateFromTest1, "Return date is missing in test data"),
+                () -> assertNotNull(priceFromTest2, "Cheapest price is missing in test data")
+        );
+
+        HolidayAutosCarsPage holidayAutosCarsPage = searchCars("Barcelona", LocalDate.now().plusDays(1), LocalDate.now().plusDays(7));
+        holidayAutosCarsPage.waitUntilCarsAreLoaded();
+        holidayAutosCarsPage.sortByPriceLowToHigh();
+
+        // Act
+        HolidayAutosCarBookingPage holidayAutosCarBookingPage = holidayAutosCarsPage.selectFirstCar();
+
+        // Assert
+        double expectedPrice = Double.parseDouble(priceFromTest2);
+        double actualPrice = holidayAutosCarBookingPage.getTotalPrice();
+
+        assertAll("Booking page verification",
+                () -> assertEquals(expectedPrice, actualPrice, 5.00, "Booking Price mismatch (Allowed 5EUR difference because the uncontrolled fees)"),
+                () -> assertTrue(holidayAutosCarBookingPage.getPickupDate().contains(pickupDateFromTest1), "Booking Pickup date mismatch"),
+                () -> assertTrue(holidayAutosCarBookingPage.getReturnDate().contains(returnDateFromTest1), "Booking Return date mismatch")
+        );
+    }
+
+    private HolidayAutosCarsPage searchCars(String pickUpLocation, LocalDate pickUpDate, LocalDate returnDate) {
         homePage.enterPickupLocation(pickUpLocation);
         homePage.selectPickupAndReturnDates(pickUpDate, returnDate);
         return homePage.clickSearch();

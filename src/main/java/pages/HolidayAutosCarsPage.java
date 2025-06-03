@@ -1,7 +1,10 @@
 package pages;
 
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.LoadState;
+import com.microsoft.playwright.options.WaitUntilState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,5 +59,20 @@ public class HolidayAutosCarsPage {
         }
 
         return prices;
+    }
+
+    /**
+     * Clicks the "Select" button on the first car and returns the booking page that opens in a new tab.
+     *
+     * @return a new HolidayAutosCarBookingPage representing the booking tab
+     */
+    public HolidayAutosCarBookingPage selectFirstCar() {
+        // Wait for a new page (tab) to open ho
+        Page newPage = page.waitForPopup(() -> {
+            page.locator("button.ct-select-btn.ct-xlarge").first().click();
+        });
+
+        newPage.waitForLoadState(LoadState.DOMCONTENTLOADED);
+        return new HolidayAutosCarBookingPage(newPage);
     }
 }
