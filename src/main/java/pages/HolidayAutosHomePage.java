@@ -54,9 +54,9 @@ public class HolidayAutosHomePage {
     /**
      * Submits the search form by clicking the search button.
      */
-    public HolidayAutosVehiclesPage clickSearch() {
+    public HolidayAutosCarsPage clickSearch() {
         page.click("#searchCarsFormBtn-searchcars");
-        return new HolidayAutosVehiclesPage(page);
+        return new HolidayAutosCarsPage(page);
     }
 
     /**
