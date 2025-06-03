@@ -33,8 +33,12 @@ public class TestDataCsvUtil {
                     // Local US to do not break the CSV
                     cheapestPrice != null ? NumberFormat.getInstance(Locale.US).format(cheapestPrice) : ""
             ));
+            Thread.sleep(1000);
+            writer.flush();
         } catch (IOException e) {
-            throw new RuntimeException("❌ Failed to write test data to CSV", e);
+            throw new RuntimeException("Failed to write test data to CSV", e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

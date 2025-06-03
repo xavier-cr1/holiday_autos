@@ -17,6 +17,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("HolidayAutos – Car Search Flow")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class HolidayAutosSearchTest {
 
     private BrowserContext context;
@@ -33,6 +34,7 @@ public class HolidayAutosSearchTest {
 
     @Test
     @DisplayName("Test 1: Search for cars using pickup location and date range")
+    @Order(1)
     void shouldSearchForCarsWithPickupLocationAndDateRange() {
         // Arrange & Act
         String pickUpLocation = "Barcelona";
@@ -49,6 +51,7 @@ public class HolidayAutosSearchTest {
 
     @Test
     @DisplayName("Test 2: Verify first car is the cheapest after sorting by price")
+    @Order(2)
     void shouldOrderCarsByPriceAndFirstCarIsCheapest() {
         // Arrange & Act
         HolidayAutosCarsPage holidayAutosCarsPage = searchCars("Barcelona", LocalDate.now().plusDays(1), LocalDate.now().plusDays(7));
@@ -77,6 +80,7 @@ public class HolidayAutosSearchTest {
 
     @Test
     @DisplayName("Test 3 - Select the cheapest car and validate details")
+    @Order(3)
     void testSelectCheapestCarAndVerifyDetails() {
         // load test data from CSV & Arrange
         Map<String, String> testData = TestDataCsvUtil.readTestData();
@@ -86,9 +90,9 @@ public class HolidayAutosSearchTest {
         String priceFromTest2 = testData.get("cheapestPrice");
 
         assertAll(
-                () -> assertNotNull(pickupDateFromTest1, "Pickup date is missing in test data"),
-                () -> assertNotNull(returnDateFromTest1, "Return date is missing in test data"),
-                () -> assertNotNull(priceFromTest2, "Cheapest price is missing in test data")
+                () -> assertTrue(pickupDateFromTest1 != null && !pickupDateFromTest1.isBlank(), "Pickup date is missing or empty"),
+                () -> assertTrue(returnDateFromTest1 != null && !returnDateFromTest1.isBlank(), "Return date is missing or empty"),
+                () -> assertTrue(priceFromTest2 != null && !priceFromTest2.isBlank(), "Cheapest price is missing or empty")
         );
 
         HolidayAutosCarsPage holidayAutosCarsPage = searchCars("Barcelona", LocalDate.now().plusDays(1), LocalDate.now().plusDays(7));

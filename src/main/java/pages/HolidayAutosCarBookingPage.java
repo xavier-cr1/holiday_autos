@@ -24,8 +24,10 @@ public class HolidayAutosCarBookingPage {
      */
     public double getTotalPrice() {
         Locator priceLocator = page.locator("div.ct-total-price.ct-font-weight-bold");
-        String priceText = priceLocator.innerText().replace("€", "").trim();
-        return Double.parseDouble(priceText.replace(",", "").replace(" ", ""));
+        String priceText = priceLocator.innerText().replaceAll("[^\\d.,]", "")
+                .replace(",", ".") // support commas as decimal points
+                .trim();
+        return Double.parseDouble(priceText);
     }
 
     /**
