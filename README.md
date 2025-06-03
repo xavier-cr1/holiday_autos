@@ -42,11 +42,9 @@ target/surefire-reports/
 ├── TEST-HolidayAutosSearchTest.xml
 ├── HolidayAutosSearchTest.txt
 ```
-Test report sample in:
+Test report sample copy in (as requested):
 ```
 test/resources/test_report_samples
-├── surefire_reports.zip
-├── ...
 ```
 
 ### 3. Run Tests Individually Using the IDE
