@@ -61,7 +61,7 @@ test/resources/test_report_samples
 - Care Search result page is considered loaded when the navigation arrows are visible: Search Results > Options > Details > Confirmation
 - Cheapest price may include dynamic fees added at the booking step; a reasonable delta is tolerated
 - Cars sorting by "Price (low to high)" is assumed to correctly order cars by cost
-- Clicking "Book" opens the car booking in a new tab, not a popup
+- Clicking "Select" opens the car booking in a new tab, not a popup
 - Pickup and return date verification are gathered from the Trip Summary panel displayed on the booking page. Price with fee from the Car Details placeholder.
 
 ### 5. Tools Used
